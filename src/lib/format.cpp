@@ -78,62 +78,62 @@ namespace gimg {
   
   int PixelDesc::getMipmappedDim(int d, int mipLevel) const {
     int a = d >> mipLevel;
-  	return (a == 0) ? 1 : a;
+    return (a == 0) ? 1 : a;
   }
   
   int PixelDesc::getMaxMipmaps(int w, int h, int d) const {
     int max = (w > h) ? ((w > d) ? w : d) : ((h > d) ? h : d);
-  	int i = 0;
-  	while (max > 0){
-  		max >>= 1;
-  		i++;
-  	}
+    int i = 0;
+    while (max > 0){
+      max >>= 1;
+      i++;
+    }
     // return i;
     --i;
-  	return (i <= 0 ? 0 : i);
+    return (i <= 0 ? 0 : i);
   }
   
   int PixelDesc::getNumPixels(int w, int h, int d, int firstMip, int numMip) const {
     bool cube = (d <= 0);
     d = (cube ? 0 : d);
-  	w = getMipmappedDim(w, firstMip);
-  	h = getMipmappedDim(h, firstMip);
-  	d = getMipmappedDim(d, firstMip);
-  	numMip = (numMip <= 0 ? 1024 : numMip);
-  	int size = 0;
-  	while (numMip){
-  		size += w * h * d;
-  		w >>= 1;
-  		h >>= 1;
-  		d >>= 1;
-  		if (w + h + d == 0) break;
-  		if (w == 0) w = 1;
-  		if (h == 0) h = 1;
-  		if (d == 0) d = 1;
-  		--numMip;
-  	}
-  	return (cube ? 6 * size : size);
+    w = getMipmappedDim(w, firstMip);
+    h = getMipmappedDim(h, firstMip);
+    d = getMipmappedDim(d, firstMip);
+    numMip = (numMip <= 0 ? 1024 : numMip);
+    int size = 0;
+    while (numMip){
+      size += w * h * d;
+      w >>= 1;
+      h >>= 1;
+      d >>= 1;
+      if (w + h + d == 0) break;
+      if (w == 0) w = 1;
+      if (h == 0) h = 1;
+      if (d == 0) d = 1;
+      --numMip;
+    }
+    return (cube ? 6 * size : size);
   }
   
   int PixelDesc::getNumBlocks(int w, int h, int d, int firstMip, int numMip) const {
     bool cube = (d <= 0);
     d = (cube ? 0 : 1);
     w = getMipmappedDim(w, firstMip);
-  	h = getMipmappedDim(h, firstMip);
-  	d = getMipmappedDim(d, firstMip);
+    h = getMipmappedDim(h, firstMip);
+    d = getMipmappedDim(d, firstMip);
     numMip = (numMip <= 0 ? 1024 : numMip); // 1024 should be enough to cover all mipmaps
-  	int size = 0;
-  	while (numMip) {
+    int size = 0;
+    while (numMip) {
       size += ((w+3)>>2) * ((h+3)>>2) * d;
-  		w >>= 1;
-  		h >>= 1;
-  		d >>= 1;
-  		if (w + h + d == 0) break;
-  		if (w == 0) w = 1;
-  		if (h == 0) h = 1;
-  		if (d == 0) d = 1;
-  		--numMip;
-  	}
+      w >>= 1;
+      h >>= 1;
+      d >>= 1;
+      if (w + h + d == 0) break;
+      if (w == 0) w = 1;
+      if (h == 0) h = 1;
+      if (d == 0) d = 1;
+      --numMip;
+    }
     return (cube ? 6 * size : size);
   }
   
