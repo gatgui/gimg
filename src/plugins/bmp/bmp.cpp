@@ -12,6 +12,8 @@ typedef unsigned char  BYTE;
 typedef unsigned short WORD;
 typedef float          FLOAT;
 
+#ifndef _WIN32
+
 typedef struct tagRGBQUAD {
   BYTE  rgbBlue;
   BYTE  rgbGreen;
@@ -55,6 +57,8 @@ typedef struct tagBITMAPINFOHEADER{
 #define BI_BITFIELDS  3
 #define BI_JPEG       4
 #define BI_PNG        5
+
+#endif
 
 #define BF_SIZE sizeof(BITMAPFILEHEADER)
 #define BI_SIZE sizeof(BITMAPINFOHEADER)

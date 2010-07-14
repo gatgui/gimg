@@ -33,7 +33,7 @@ USA.
 
 namespace gimg {
   
-  std::vector<Image::Plugin*> Image::msPlugins;
+  gcore::List<Image::Plugin*> Image::msPlugins;
   Image::PluginMap Image::msReaders;
   Image::PluginMap Image::msWriters;
 
@@ -96,7 +96,7 @@ namespace gimg {
   }
   
   
-  /* Resizing image */
+  // Resizing image
 
   class Filter {
     public:
@@ -216,7 +216,7 @@ namespace gimg {
         double scale = double(dstSize) / double(srcSize);
         double width = filter->width();
         double fscale = 1.0;
-
+        
         if (scale < 1.0) {
           // when minimizing, increase filter width
           width /= scale;
@@ -224,11 +224,11 @@ namespace gimg {
         }
         
         double iscale = 1.0 / scale;
-
+        
         unsigned int windowSize = 2 * ((unsigned int) ceil(width)) + 1;
         
         unsigned int i, j;
-      
+        
         // init weight table
         mWeightsTable.resize(dstSize);
         for (i=0; i<dstSize; ++i) {
@@ -236,9 +236,9 @@ namespace gimg {
           mWeightsTable[i].start = 0;
           mWeightsTable[i].length= 0;
         }
-
+        
         // initialize weights for each pixel
-      
+        
         for (i=0; i<dstSize; ++i) {
           
           PixelWeights &pw = mWeightsTable[i];
@@ -251,16 +251,16 @@ namespace gimg {
           
           pw.start = start;
           pw.length = len;
-        
+          
           double totalWeights = 0.0;
-  
+          
           for (j=0; j<len; ++j) {
             double filterPos = double(start+j) + 0.5 - srcX;
             
             pw.weights[j] = filter->weight(filterPos * fscale);
             totalWeights += pw.weights[j];
           }
-
+          
           if (totalWeights > 0.0 && totalWeights != 1.0) {
             // normalize
             totalWeights = 1.0 / totalWeights;
@@ -419,19 +419,17 @@ namespace gimg {
     }
   }
   
-  static bool EnumPlugins(const std::string &dirname,
-                          const std::string &fname,
-                          gcore::FileType type) {
-    if (type == gcore::FT_FILE) {
-
-      if (gcore::FileExtension(fname) == "ipl") {
-
-        Image::Plugin *plg = new Image::Plugin(gcore::JoinPath(dirname, fname));
+  static bool EnumPlugins(const gcore::Path &path) {
+    if (path.isFile()) {
+      
+      if (path.checkExtension("ipl")) {
+        
+        Image::Plugin *plg = new Image::Plugin(path.fullname());
         if (plg->_opened()) {
           if (!Image::RegisterPlugin(plg)) {
             delete plg;
           } else {
-            std::cout << "Loaded image plugin: \"" << fname << "\"" << std::endl;
+            std::cout << "Loaded image plugin: \"" << path.basename() << "\"" << std::endl;
           }
         } else {
           delete plg;
@@ -444,28 +442,28 @@ namespace gimg {
   // ---
 
   bool Image::RegisterPlugin(Image::Plugin *plugin) {
-
+    
     bool added = false;
-
+    
     for (int i=0; i<plugin->numExtensions(); ++i) {
-
+      
       const char *ext = plugin->getExtension(i);
-
+      
       if (plugin->canRead() && msReaders.find(ext) == msReaders.end()) {
         added = true;
         msReaders[ext] = plugin;
       }
-
+      
       if (plugin->canWrite() && msWriters.find(ext) == msWriters.end()) {
         added = true;
         msWriters[ext] = plugin;
       }
     }
-
+    
     if (added) {
       msPlugins.push_back(plugin);
     }
-
+    
     return added;
   }
 
@@ -476,7 +474,7 @@ namespace gimg {
     if (pit == msPlugins.end()) {
       return false;
     }
-
+    
     Image::PluginMap::iterator it;
     
     if (plugin->canRead()) {
@@ -490,7 +488,7 @@ namespace gimg {
         }
       }
     }
-
+    
     if (plugin->canWrite()) {
       it = msWriters.begin();
       while (it != msWriters.end()) {
@@ -502,23 +500,17 @@ namespace gimg {
         }
       }
     }
-
+    
     delete *pit;
     msPlugins.erase(pit);
-
+    
     return true;
   }
   
-  void Image::LoadPlugins(const std::string &path) {
-    gcore::EnumFilesCallback callback;
-    
-    gcore::MakeCallback(EnumPlugins, callback);
-    
-    if (path.length() == 0) {
-      gcore::ForEachInDir(".", callback);
-    } else {
-      gcore::ForEachInDir(path, callback);
-    }
+  void Image::LoadPlugins(const gcore::Path &path) {
+    gcore::Path::EachFunc callback;
+    gcore::Bind(EnumPlugins, callback);
+    path.each(callback);
   }
   
   void Image::UnloadPlugins() {
@@ -528,14 +520,14 @@ namespace gimg {
     msPlugins.clear();
   }
   
-  Image* Image::Read(const std::string &filepath, int numMips) {
+  Image* Image::Read(const gcore::Path &filepath, int numMips) {
     
-    std::string ext = gcore::FileExtension(filepath);
+    gcore::String ext = filepath.getExtension();
     
     PluginMap::iterator it = msReaders.find(ext.c_str());
     
     if (it != msReaders.end()) {
-      Image *img = it->second->readImage(filepath.c_str());
+      Image *img = it->second->readImage(filepath.fullname().c_str());
       if (img) {
         if (img->getNumMipmaps() <= 0 && numMips > 0) {
           img->buildMipmaps(numMips);
@@ -543,17 +535,19 @@ namespace gimg {
         return img;
       }
     }
+    
     return 0;
   }
   
-  bool Image::Write(Image *img, const std::string &filepath) {
-    std::string ext = gcore::FileExtension(filepath);
-
+  bool Image::Write(Image *img, const gcore::Path &filepath) {
+    gcore::String ext = filepath.getExtension();
+    
     PluginMap::iterator it = msWriters.find(ext.c_str());
-
+    
     if (it != msWriters.end()) {
-      return it->second->writeImage(img, filepath.c_str());
+      return it->second->writeImage(img, filepath.fullname().c_str());
     }
+    
     return false;
   }
 
