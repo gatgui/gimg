@@ -38,7 +38,7 @@ prjs = [
     "libs"    : ["gimg", "gcore"],
     "incdirs" : ["include", "gcore/include"]
   },
-  { "name"    : "tests",
+  { "name"    : "gimg_tests",
     "type"    : "testprograms",
     "srcs"    : glob.glob("src/tests/*.cpp"),
     "libs"    : ["gimg", "gcore"],
