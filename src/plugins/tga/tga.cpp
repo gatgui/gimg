@@ -5,11 +5,11 @@
 #include <sstream>
 #include <string>
 
-MODULE_API int numExtensions() {
+GCORE_MODULE_API int numExtensions() {
   return 1;
 }
 
-MODULE_API const char* getExtension(int idx) {
+GCORE_MODULE_API const char* getExtension(int idx) {
   if (idx != 0) {
     return 0;
   } else {
@@ -17,11 +17,11 @@ MODULE_API const char* getExtension(int idx) {
   }
 }
 
-MODULE_API bool canRead() {
+GCORE_MODULE_API bool canRead() {
   return true;
 }
 
-MODULE_API bool canWrite() {
+GCORE_MODULE_API bool canWrite() {
   return false;
 }
 
@@ -37,7 +37,7 @@ static bool ReadData(std::ifstream &file, char *data, unsigned int sz) {
   return false;
 }
 
-MODULE_API bool writeImage(gimg::Image *img, const char *filepath) {
+GCORE_MODULE_API bool writeImage(gimg::Image *img, const char *filepath) {
 
 #ifdef _DEBUG
   std::cout << "Write TGA to \"" << filepath << "\"" << std::endl;
@@ -149,7 +149,7 @@ MODULE_API bool writeImage(gimg::Image *img, const char *filepath) {
   }
 }
 
-MODULE_API gimg::Image* readImage(const char *filepath) {
+GCORE_MODULE_API gimg::Image* readImage(const char *filepath) {
   std::ifstream file;  
   
   file.open(filepath, std::ios::binary);

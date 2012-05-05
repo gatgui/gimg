@@ -67,11 +67,11 @@ typedef struct tagBITMAPINFOHEADER{
 
 // ---
 
-MODULE_API int numExtensions() {
+GCORE_MODULE_API int numExtensions() {
   return 1;
 }
 
-MODULE_API const char* getExtension(int idx) {
+GCORE_MODULE_API const char* getExtension(int idx) {
   if (idx != 0) {
     return 0;
   } else {
@@ -79,11 +79,11 @@ MODULE_API const char* getExtension(int idx) {
   }
 }
 
-MODULE_API bool canRead() {
+GCORE_MODULE_API bool canRead() {
   return true;
 }
 
-MODULE_API bool canWrite() {
+GCORE_MODULE_API bool canWrite() {
   return false;
 }
 
@@ -93,7 +93,7 @@ MODULE_API bool canWrite() {
     return 0;\
   }
 
-MODULE_API gimg::Image* readImage(const char *filepath) {
+GCORE_MODULE_API gimg::Image* readImage(const char *filepath) {
   // dib is not in the format we want 
   // PF_RGB | PF_RGBA (24 or 32 bits)
   // -> NOT BGR beware !
@@ -243,6 +243,6 @@ MODULE_API gimg::Image* readImage(const char *filepath) {
   return bmp;
 }
 
-MODULE_API bool writeImage(gimg::Image *, const char*) {
+GCORE_MODULE_API bool writeImage(gimg::Image *, const char*) {
   return false;
 }

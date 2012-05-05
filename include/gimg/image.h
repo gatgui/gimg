@@ -59,14 +59,14 @@ namespace gimg {
       
     public:
       
-      BEGIN_MODULE_INTERFACE ( Plugin )
-        DEFINE_MODULE_SYMBOL0R ( int, numExtensions )
-        DEFINE_MODULE_SYMBOL1R ( const char*, getExtension, int )
-        DEFINE_MODULE_SYMBOL0R ( bool, canRead )
-        DEFINE_MODULE_SYMBOL0R ( bool, canWrite )
-        DEFINE_MODULE_SYMBOL1R ( Image*, readImage, const char* )
-        DEFINE_MODULE_SYMBOL2R ( bool, writeImage, Image*, const char* )
-      END_MODULE_INTERFACE
+      GCORE_BEGIN_MODULE_INTERFACE ( Plugin )
+        GCORE_DEFINE_MODULE_SYMBOL0R ( int, numExtensions )
+        GCORE_DEFINE_MODULE_SYMBOL1R ( const char*, getExtension, int )
+        GCORE_DEFINE_MODULE_SYMBOL0R ( bool, canRead )
+        GCORE_DEFINE_MODULE_SYMBOL0R ( bool, canWrite )
+        GCORE_DEFINE_MODULE_SYMBOL1R ( Image*, readImage, const char* )
+        GCORE_DEFINE_MODULE_SYMBOL2R ( bool, writeImage, Image*, const char* )
+      GCORE_END_MODULE_INTERFACE
       
       static void LoadPlugins(const gcore::Path &path);
       static void UnloadPlugins();

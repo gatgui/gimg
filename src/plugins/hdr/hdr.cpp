@@ -276,11 +276,11 @@ static void rotateCCW(void *&pixels, unsigned int &width, unsigned int &height) 
 
 // ---
 
-MODULE_API int numExtensions() {
+GCORE_MODULE_API int numExtensions() {
   return 1;
 }
 
-MODULE_API const char* getExtension(int idx) {
+GCORE_MODULE_API const char* getExtension(int idx) {
   if (idx != 0) {
     return 0;
   } else {
@@ -288,15 +288,15 @@ MODULE_API const char* getExtension(int idx) {
   }
 }
 
-MODULE_API bool canRead() {
+GCORE_MODULE_API bool canRead() {
   return true;
 }
 
-MODULE_API bool canWrite() {
+GCORE_MODULE_API bool canWrite() {
   return true;
 }
 
-MODULE_API gimg::Image* readImage(const char *filepath) {
+GCORE_MODULE_API gimg::Image* readImage(const char *filepath) {
   
   FILE *hdrFile = fopen(filepath, "rb");
   
@@ -531,7 +531,7 @@ MODULE_API gimg::Image* readImage(const char *filepath) {
 
 }
 
-MODULE_API bool writeImage(gimg::Image *img, const char *filepath) {
+GCORE_MODULE_API bool writeImage(gimg::Image *img, const char *filepath) {
   
   if (!img || !filepath) {
     return false;
