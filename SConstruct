@@ -20,14 +20,16 @@ except:
 
 if initsubs:
   import subprocess
-  subprocess.Popen("git submodule init").communicate()
-  subprocess.Popen("git submodule update").communicate()
+  subprocess.Popen("git submodule init", shell=True).communicate()
+  subprocess.Popen("git submodule update", shell=True).communicate()
   
   import excons
 
 import excons.tools
 from excons.tools import gl
 from excons.tools import glut
+
+build_gcore = False
 
 if gcore_inc is None or gcore_lib is None:
   gcore_inc = "gcore/include"
